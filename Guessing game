@@ -1,0 +1,94 @@
+package org.gug;
+
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
+
+public class GuessGame {
+	
+	    public static void main(String[] args) {
+	        Scanner sc = new Scanner(System.in);
+	        Random ran = new Random();
+
+	        System.out.println("Welcome to the Guessing Number Game!");
+	        System.out.print("Enter your name: ");
+	        String playerName = sc.nextLine();
+
+	        System.out.println("Hello, " + playerName + "! Let's start the game.");
+
+	       
+	        String computerNumber = generateUniqueFourDigitNumber(ran);
+
+	        System.out.println("A 4-digit number has been chosen. Try to guess it!");
+
+	        int moves = 0;
+	        boolean guessedCorrectly = false;
+	        long startTime = System.currentTimeMillis();
+
+	        while (!guessedCorrectly) {
+	            System.out.print("Enter your guess: ");
+	            String userGuess = sc.nextLine();
+
+	            // Validate user input
+	            if (!isValidGuess(userGuess)) {
+	                System.out.println("Invalid input! Please enter a 4-digit number with unique digits.");
+	                continue;
+	            }
+
+	            moves++;
+	            String feedback = getFeedback(computerNumber, userGuess);
+	            System.out.println("Feedback: " + feedback);
+
+	            if (feedback.equals("++++")) {
+	                guessedCorrectly = true;
+	                long endTime = System.currentTimeMillis();
+	                System.out.println("Congratulations, " + playerName + "! You've guessed the number " + computerNumber + " in " + moves + " moves.");
+	                System.out.println("Time taken: " + (endTime - startTime) / 1000 + " seconds.");
+	            }
+	        }
+
+	        sc.close();
+	    }
+
+	    // Generate a unique 4-digit number as a string
+	    private static String generateUniqueFourDigitNumber(Random random) {
+	        Set<Integer> digits = new HashSet<>();
+	        while (digits.size() < 4) {
+	            digits.add(random.nextInt(10));
+	        }
+	        StringBuilder number = new StringBuilder();
+	        for (int digit : digits) {
+	            number.append(digit);
+	        }
+	        return number.toString();
+	    }
+
+	    // Check if the user guess is valid
+	    private static boolean isValidGuess(String guess) {
+	        if (guess.length() != 4) return false;
+	        Set<Character> uniqueDigits = new HashSet<>();
+	        for (char c : guess.toCharArray()) {
+	            if (!Character.isDigit(c) || !uniqueDigits.add(c)) {
+	                return false;
+	            }
+	        }
+	        return true;
+	    }
+
+	    // Provide feedback on the user's guess
+	    private static String getFeedback(String computerNumber, String userGuess) {
+	        StringBuilder feedback = new StringBuilder();
+	        for (int i = 0; i < 4; i++) {
+	            if (computerNumber.charAt(i) == userGuess.charAt(i)) {
+	                feedback.append("+");
+	            } else if (computerNumber.contains(String.valueOf(userGuess.charAt(i)))) {
+	                feedback.append("-");
+	            }
+	        }
+	        return feedback.toString();
+	    }
+	}
+
+
+}
